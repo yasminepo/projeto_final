@@ -1,0 +1,103 @@
+from model import usuario_model
+
+
+def controlador_login(login, senha):
+    return usuario_model.validar_login(login, senha)
+
+
+# =========================
+# EVENTOS
+# =========================
+
+def controlador_cadastrar_evento(nome, data, local):
+    nome = nome.strip()
+    data = data.strip()
+    local = local.strip()
+
+    if nome == "" or data == "" or local == "":
+        return False, "Todos os campos do evento devem ser preenchidos."
+
+    usuario_model.cadastrar_evento(nome, data, local)
+
+    return True, "Evento cadastrado com sucesso!"
+
+
+def controlador_existe_evento():
+    return usuario_model.existe_evento()
+
+
+def controlador_listar_eventos():
+    return usuario_model.listar_eventos()
+
+
+def controlador_dados_evento(indice_evento):
+    return usuario_model.dados_evento(indice_evento)
+
+
+def controlador_remover_evento(indice_evento):
+
+    if usuario_model.remover_evento(indice_evento):
+        return True, "Evento removido com sucesso!"
+
+    return False, "Evento não encontrado."
+
+
+# =========================
+# CONVIDADOS
+# =========================
+
+def controlador_cadastrar_convidado(indice_evento, nome):
+    nome = nome.strip()
+
+    if nome == "":
+        return False, "O nome do convidado não pode ficar em branco."
+
+    if usuario_model.pesquisar_convidado(indice_evento, nome):
+        return False, f"O convidado '{nome}' já está cadastrado."
+
+    usuario_model.cadastrar_convidado(indice_evento, nome)
+
+    return True, f"Convidado '{nome}' cadastrado com sucesso!"
+
+
+def controlador_confirmar_presenca(indice_evento, nome):
+    nome = nome.strip()
+
+    if usuario_model.confirmar_presenca(indice_evento, nome):
+        return True, f"Presença de '{nome}' confirmada."
+
+    return False, f"Convidado '{nome}' não foi encontrado."
+
+
+def controlador_pesquisar_convidado(indice_evento, nome):
+    nome = nome.strip()
+
+    convidado = usuario_model.pesquisar_convidado(indice_evento, nome)
+
+    if convidado:
+
+        status = "Confirmado" if convidado["confirmado"] else "Pendente"
+
+        return True, (
+            f"\nConvidado: {convidado['nome']}\n"
+            f"Presença: {status}"
+        )
+
+    return False, f"Convidado '{nome}' não foi encontrado."
+
+
+def controlador_remover_convidado(indice_evento, nome):
+    nome = nome.strip()
+
+    if usuario_model.remover_convidado(indice_evento, nome):
+        return True, f"Convidado '{nome}' removido com sucesso!"
+
+    return False, f"Convidado '{nome}' não foi encontrado."
+
+
+def controlador_listar_convidados(indice_evento):
+    return usuario_model.listar_convidados(indice_evento)
+
+
+def controlador_contar_participantes(indice_evento):
+    return usuario_model.contar_participantes(indice_evento)
